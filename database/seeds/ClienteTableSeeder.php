@@ -23,8 +23,9 @@ class ClienteTableSeeder extends Seeder
             'complemento' => '8 andar',
             'cidade' => 'São Paulo',
             'created_at' => 'now()',
-        ],
-        [
+        ]);
+
+        DB::table('tbl_cliente')->insert([
             'id_usuario' => 3,
             'nome' => 'Segundo Cliente Ecommerce',
             'cpf' => '12345678902',

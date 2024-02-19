@@ -19,16 +19,18 @@ class UsersTableSeeder extends Seeder
             'admin' => true,
             'created_at' => 'now()',
             'email_verified_at' => 'now()',
-        ],
-        [
+        ]);
+
+        DB::table('users')->insert([
             'name' => 'Primeiro Cliente Ecommerce',
             'email' => 'pclecomm@ecommerce_project.com',
             'password' => bcrypt('123456'),
             'admin' => false,
             'created_at' => 'now()',
             'email_verified_at' => 'now()',
-        ],
-        [
+        ]);
+
+        DB::table('users')->insert([
             'name' => 'Segundo Cliente Ecommerce',
             'email' => 'sclecomm@ecommerce_project.com',
             'password' => bcrypt('123456'),
