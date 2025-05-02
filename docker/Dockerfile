@@ -50,11 +50,13 @@ RUN chown -R 1000:1000 \
 RUN chmod o+w /var/www/html/storage -R
 
 RUN cd /var/www/html && composer install
-RUN php artisan key:generate
-RUN php artisan storage:link
-RUN php artisan migrate
-RUN php artisan db:seed
+# RUN php artisan key:generate
+# RUN php artisan storage:link
+# RUN php artisan migrate
+# RUN php artisan db:seed
 
 # Expose port 9000 and start php-fpm server (for FastCGI Process Manager)
 EXPOSE 9000
-CMD ["php-fpm"]
+# CMD ["php-fpm"]
+CMD ["bash", "-c" , "cp /var/www/html/.env.docker /var/www/html/.env && composer install --no-plugins && php artisan key:generate && rm -rf public/storage && php artisan storage:link && php-fpm"]
+

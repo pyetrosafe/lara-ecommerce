@@ -1,4 +1,6 @@
-version: '2.0'
+# version: '2.0'
+name: 'lara-ecommerce'
+
 services:
 
   # PHP Service
@@ -6,6 +8,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+      args:
+        WWWGUID: '${WWWGUID:-1000}'
     image: laravel-5.7/php-7.4
     container_name: app
     restart: unless-stopped
@@ -16,12 +20,15 @@ services:
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
+      WWWUSER: '${WWWUSER:-1000}'
     working_dir: /var/www/html/
     volumes:
       - ./:/var/www/html/
       - ./docker/php.ini:/usr/local/etc/php/conf.d/laravel.ini
     networks:
-      - app-network
+      - app-network-laravel
+    depends_on:
+      - db
 
   # Nginx Service
   webserver:
@@ -36,7 +43,9 @@ services:
       - ./:/var/www/html/
       - ./docker/nginx.conf:/etc/nginx/conf.d/app.conf
     networks:
-      - app-network
+      - app-network-laravel
+    depends_on:
+      - app
 
   # Postgres
   db:
@@ -45,7 +54,7 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "5432:5432"
+      - "5433:5433"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgrespass
@@ -54,11 +63,11 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data/
     networks:
-      - app-network
+      - app-network-laravel
 
 # Docker Networks
 networks:
-  app-network:
+  app-network-laravel:
     driver: bridge
 
 # Volumes
