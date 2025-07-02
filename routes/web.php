@@ -29,6 +29,9 @@ Route::get('migrate', function() {
 // User Default Routes
 Route::middleware(['userDefault'])->group(function () {
 
+    // Test HardwareDB Factory
+    Route::get('/testhdb', 'HardwareDBController')->name('index');
+
     // Index/Home Routes
     Route::get('/', 'HomeController@index')->name('index');
     Route::get('/home', 'HomeController@index')->name('home');

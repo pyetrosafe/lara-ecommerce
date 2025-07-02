@@ -179,6 +179,11 @@ return [
         * Third Party Service Providers...
         */
         Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
+
+        /**
+         * Custom Service Providers...
+         */
+        App\Providers\HardwareDBServiceProvider::class,
     ],
 
     /*

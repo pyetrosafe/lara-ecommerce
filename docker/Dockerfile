@@ -33,6 +33,16 @@ RUN docker-php-ext-install pdo pdo_pgsql
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 
+# Enable Xdebug
+RUN pecl install xdebug-3.1.6
+RUN echo "[XDebug]" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "zend_extension=xdebug" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.mode=debug,develop" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.discover_client_host=true" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/xdebug.ini
+
 # Install composer (php package manager)
 # RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -57,6 +67,7 @@ RUN cd /var/www/html && composer install
 
 # Expose port 9000 and start php-fpm server (for FastCGI Process Manager)
 EXPOSE 9000
+
 # CMD ["php-fpm"]
 CMD ["bash", "-c" , "cp /var/www/html/.env.docker /var/www/html/.env && composer install --no-plugins && php artisan key:generate && rm -rf public/storage && php artisan storage:link && php-fpm"]
 
