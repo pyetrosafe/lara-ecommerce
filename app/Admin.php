@@ -15,4 +15,7 @@ class Admin extends Model
      */
     protected $table = 'tbl_admin';
 
+    public function user() {
+        return $this->belongsTo('App\User', 'id_usuario');
+    }
 }

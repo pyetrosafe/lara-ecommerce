@@ -17,6 +17,10 @@ class Produto extends Model
      */
     protected $table = 'tbl_produto';
 
+    protected $casts = [
+        'ativo' => 'boolean',
+    ];
+
     public $sortable = ['id', 'nome', 'descricao', 'valor', 'ativo', 'created_at'];
 
     public function Pedido() {
