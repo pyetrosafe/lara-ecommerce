@@ -66,7 +66,7 @@ Este plano descreve a estratégia para implementar uma suíte de testes completa
 1.  [x] **Mapear as principais funcionalidades e rotas:**
     *   Analisar `routes/web.php` para identificar os principais grupos de rotas (autenticação, gerenciamento de produtos, carrinho, etc.).
 
-2.  **[ ] Criar arquivos de teste para os Controllers:**
+2.  [x] **Criar arquivos de teste para os Controllers:**
     *   Usar o Artisan para gerar os arquivos na pasta `tests/Feature`.
     *   Comando: `php artisan make:test Http\Controllers\ProdutoControllerTest` (repetir para os controllers principais).
 
@@ -78,7 +78,8 @@ Este plano descreve a estratégia para implementar uma suíte de testes completa
         *   Verificar se um produto é criado no banco de dados com dados válidos.
     *   Testar as rotas de `update` e `destroy` de forma similar.
 
-4.  **[ ] Repetir o processo para outros Controllers:**
+4.  [x] **Repetir o processo para outros Controllers:**
+    *   [x] `Admin\ClientesController` (Store, Update, Destroy)
     *   [x] `HistoricoPedidosController`
     *   Aplicar a mesma lógica para os controllers de autenticação, carrinho, pedidos, etc.
 
