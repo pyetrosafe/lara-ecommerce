@@ -79,6 +79,7 @@ Este plano descreve a estratégia para implementar uma suíte de testes completa
     *   Testar as rotas de `update` e `destroy` de forma similar.
 
 4.  **[ ] Repetir o processo para outros Controllers:**
+    *   [x] `HistoricoPedidosController`
     *   Aplicar a mesma lógica para os controllers de autenticação, carrinho, pedidos, etc.
 
 **Nota sobre Refatoração (Clean Code):** Se encontrarmos "Fat Controllers" (controllers com muita lógica), vamos refatorá-los. A lógica de negócio será movida para classes de Serviço ou Ação (Action classes), tornando o controller enxuto e focado apenas em receber a requisição e retornar a resposta.

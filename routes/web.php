@@ -22,8 +22,9 @@ Auth::routes(['verify' => true]);
 
 Route::get('migrate', function() {
     Artisan::call('migrate:fresh');
-    Artisan::call('db:seed --force');
-    echo 'Migrate conclúido!';
+    Artisan::call('db:seed', ['--force' => true]);
+    echo 'Migrate concluído!';
+    return 'Migrate concluído!';
 });
 
 // User Default Routes
@@ -97,4 +98,3 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('produtos', 'Admin\ProdutosController@ajaxSearch');
     });
 });
-
