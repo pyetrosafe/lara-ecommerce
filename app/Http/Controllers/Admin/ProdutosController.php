@@ -82,16 +82,17 @@ class ProdutosController extends Controller
 
             $produto = new Produto;
 
-            $produto->nome      = $data['nome'];
-            $produto->descricao = $data['descricao'];
-            $produto->valor     = $data['valor'];
-            $produto->ativo     = $data['ativo'];
-            $produto->imagem    = $imgPathSaved;
+            $produto->nome          = $data['nome'];
+            $produto->descricao     = $data['descricao'];
+            $produto->cod_barras    = $data['cod_barras'];
+            $produto->valor         = $data['valor'];
+            $produto->ativo         = $data['ativo'];
+            $produto->imagem        = $imgPathSaved;
 
             $produto->save();
 
             return redirect('admin/produtos')->withSuccess('Registro salvo com sucesso!');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Storage::delete($imgPathSaved);
             return redirect()->back()->withErrors($e->getMessage())->withInput();
         }
@@ -169,7 +170,7 @@ class ProdutosController extends Controller
                 Storage::delete($imgPathSaved);
 
             return redirect('admin/produtos')->withSuccess('Alterações feitas com sucesso!');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage())->withInput();
         }
     }
@@ -195,7 +196,7 @@ class ProdutosController extends Controller
             $produto->delete();
 
             return redirect('admin/produtos');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -213,21 +214,27 @@ class ProdutosController extends Controller
     public function ajaxSearch(Request $request)
     {
         //
-        //dd( $request->produto, $request->input('produto') );
+        try {
+            //dd( $request->produto, $request->input('produto') );
 
-        //$this->validator($request);
+            //$this->validator($request);
 
-        $term = $request->produto;
+            $term = $request->produto;
 
-        if ($term === null)
-            return [];
+            if ($term === null)
+                return [];
 
-        if (ctype_digit($term)) {
-            $term = ltrim($term, '0');
-            $produtos = [Produto::select('id', 'nome', 'valor', 'imagem')->find($term)];
-        } else
-            $produtos = Produto::select('id', 'nome', 'valor', 'imagem')->where('nome', 'ilike', $term.'%')->get();
+            if (ctype_digit($term)) {
+                $term = ltrim($term, '0');
+                $produtos = [Produto::select('id', 'nome', 'valor', 'imagem')->find($term)];
+            } else {
+                $produtos = Produto::select('id', 'nome', 'valor', 'imagem')->where(DB::raw('lower(nome)'), 'like', mb_strtolower($term).'%')->get();
+            }
 
-        return $produtos;
+            return $produtos;
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
     }
 }

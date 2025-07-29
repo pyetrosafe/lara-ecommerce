@@ -147,7 +147,7 @@ class HistoricoPedidosController extends Controller
             $pedido->Produtos()->sync($pedidoItens);
 
             return redirect('/historico')->withSuccess('Pedido Nro: '.str_pad($id, 8, '0', STR_PAD_LEFT).' alterado com sucesso!');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
         }
     }

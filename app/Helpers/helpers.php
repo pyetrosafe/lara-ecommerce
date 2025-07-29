@@ -58,7 +58,7 @@ if (! function_exists('MaskText') ) {
             } else
                 $mask[$i] = $char;
           }
-      } catch (Exception $e) {
+      } catch (\Exception $e) {
         echo $e->getMessage();
       }
       return $mask;
@@ -79,7 +79,7 @@ if (! function_exists('MaskText') ) {
           for($i=0; $i<strlen($str); $i++) {
             $mask[stripos($mask,'#')] = $str[$i];
           }
-      } catch (Exception $e) {
+      } catch (\Exception $e) {
         echo $e->getMessage();
       }
 
@@ -269,7 +269,7 @@ if (! function_exists('formatDate') ) {
             //dd( $fmt, $value, $maskDateReplace );
             try {
                 $mkTime = mktime($fmt['hour'], $fmt['minute'], $fmt['second'], $fmt['month'], $fmt['day'], $fmt['year']);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 //dd( $e->getMessage(), $fmt, $value, $maskDateReplace, $temp );
                 return ($e->getMessage() );
             }

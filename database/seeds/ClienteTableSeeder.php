@@ -22,7 +22,7 @@ class ClienteTableSeeder extends Seeder
             'numero' => '15',
             'complemento' => '8 andar',
             'cidade' => 'São Paulo',
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_cliente')->insert([
@@ -35,7 +35,7 @@ class ClienteTableSeeder extends Seeder
             'numero' => '15',
             'complemento' => '8 andar',
             'cidade' => 'São Paulo',
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
     }
 }

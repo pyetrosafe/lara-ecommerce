@@ -23,7 +23,7 @@ class CreateTblProdutoTable extends Migration
             $table->string('cod_barras', 20);
             $table->decimal('valor')->default(0);
             $table->boolean('ativo')->default(true);
-            $table->string('imagem', 255);
+            $table->string('imagem', 255)->nullable();
             $table->integer('quantidade')->default(0);
             $table->timestamps();
         });

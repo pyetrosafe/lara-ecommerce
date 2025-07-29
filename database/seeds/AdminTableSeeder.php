@@ -15,7 +15,7 @@ class AdminTableSeeder extends Seeder
         DB::table('tbl_admin')->insert([
             'id_usuario' => 1,
             'nome' => 'Administrador Senior',
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
     }
 }

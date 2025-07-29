@@ -78,12 +78,14 @@ class PedidosController extends Controller
             $pedido->id_usuario_update = auth()->user()->id;
             $pedido->id_pedido_status = 1;
             $pedido->valor = $total;
+            $numero = Pedido::latest()->first();
+            $pedido->numero = ($numero ? $numero->numero : 0) + 1;
             $pedido->save();
 
             $pedido->Produtos()->sync($pedidoItens);
 
             return redirect('admin/pedidos')->withSuccess('Alterações feitas com sucesso!');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -100,9 +102,9 @@ class PedidosController extends Controller
         $record = Pedido::with('Produtos', 'PedidoStatus', 'Cliente')->find($id);
         //d( $record );
 
-        $record->id_pedido_status = 7;
-        $record->save();
-        $record->refresh();
+        // $record->id_pedido_status = 7;
+        // $record->save();
+        // $record->refresh();
 
         $params = array(
             //'action'        => 'show',
@@ -150,7 +152,7 @@ class PedidosController extends Controller
             $pedido->Produtos()->sync($pedidoItens);
 
             return redirect('admin/pedidos')->withSuccess('Alterações feitas com sucesso!');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -178,7 +180,7 @@ class PedidosController extends Controller
             $pedido->save();
 
             return redirect('admin/pedidos');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }

@@ -17,8 +17,8 @@ class UsersTableSeeder extends Seeder
             'email' => 'admin@laraecommerce.com',
             'password' => bcrypt('123456'),
             'admin' => true,
-            'created_at' => 'now()',
-            'email_verified_at' => 'now()',
+            'created_at' => now(),
+            'email_verified_at' => now(),
         ]);
 
         DB::table('users')->insert([
@@ -26,8 +26,8 @@ class UsersTableSeeder extends Seeder
             'email' => 'pcl@laraecommerce.com',
             'password' => bcrypt('123456'),
             'admin' => false,
-            'created_at' => 'now()',
-            'email_verified_at' => 'now()',
+            'created_at' => now(),
+            'email_verified_at' => now(),
         ]);
 
         DB::table('users')->insert([
@@ -35,8 +35,8 @@ class UsersTableSeeder extends Seeder
             'email' => 'scl@laraecommerce.com',
             'password' => bcrypt('123456'),
             'admin' => false,
-            'created_at' => 'now()',
-            'email_verified_at' => 'now()',
+            'created_at' => now(),
+            'email_verified_at' => now(),
         ]);
     }
 }

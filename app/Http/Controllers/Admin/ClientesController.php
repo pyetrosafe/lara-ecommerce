@@ -100,7 +100,7 @@ class ClientesController extends Controller
 
             // Envio de e-mail de boas vindas
             //$user->notify(new UserWelcomePasswordNotification($invoice));
-            // $user->notify(new UserWelcomePasswordNotification($password));
+            $user->notify(new UserWelcomePasswordNotification($password));
 
             // Envio de e-mail de confirmação de e-mail
             // Cadastrado pelo Admin, não é necessário verificar!
@@ -179,7 +179,7 @@ class ClientesController extends Controller
             DB::commit();
 
             return redirect('admin/clientes')->withSuccess('Alterações feitas com sucesso!');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors($e->getMessage())->withInput();
         }
@@ -206,7 +206,7 @@ class ClientesController extends Controller
             $cliente->delete();
 
             return redirect('admin/clientes');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }

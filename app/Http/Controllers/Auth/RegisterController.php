@@ -104,7 +104,7 @@ class RegisterController extends Controller
 
             DB::commit();
             return $user;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors( $e->getMessage() );
         }

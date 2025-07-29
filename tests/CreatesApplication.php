@@ -13,6 +13,8 @@ trait CreatesApplication
      */
     public function createApplication()
     {
+        putenv('APP_ENV=testing'); // Garante que o ambiente de teste está ativo
+        putenv('FAKER_LOCALE=pt_BR');
         putenv('DB_CONNECTION=sqlite');
         putenv('DB_DATABASE=:memory:');
 

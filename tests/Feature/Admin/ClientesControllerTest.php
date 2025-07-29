@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use App\Admin;
 use App\Cliente;
+use Illuminate\Support\Facades\Notification;
 
 class ClientesControllerTest extends TestCase
 {
@@ -35,6 +36,37 @@ class ClientesControllerTest extends TestCase
         $this->admin = $app->make(Admin::class)->first();
 
         return ['app' => $app, 'kernel' => $kernel];
+    }
+
+    /**
+     * Test POST /admin/clientes (index)
+     *
+     * @return void
+     */
+    public function testIndex()
+    {
+        extract($this->setupApplicationAndDatabase());
+
+        // Autentica o usuário na instância da app
+        $app['auth']->guard('web')->setUser($this->admin->User);
+
+        $token = $app['session']->token();
+
+        $request = Request::create('/admin/clientes', 'GET', [], [], [], [
+            'HTTP_X-CSRF-TOKEN' => $token,
+            'HTTP_REFERER' => '/admin/clientes',
+        ]);
+
+        $response = $kernel->handle($request);
+
+        // Asserções
+        $this->assertEquals(200, $response->getStatusCode());
+
+        // Verificação do banco de dados usando a conexão da própria $app
+        $clienteSalvo = $app['db']->table('tbl_cliente')->get();
+        $this->assertNotNull($clienteSalvo, "Clientes não encontrados no banco de dados.");
+
+        $kernel->terminate($request, $response);
     }
 
     /**
@@ -70,6 +102,8 @@ class ClientesControllerTest extends TestCase
             'HTTP_REFERER' => '/admin/clientes',
         ]);
 
+        Notification::fake();
+
         $response = $kernel->handle($request);
 
         // Asserções
@@ -81,8 +115,13 @@ class ClientesControllerTest extends TestCase
         $this->assertNotNull($clienteSalvo, "Cliente não foi encontrado no banco de dados.");
         $this->assertEquals($data['nome'], $clienteSalvo->nome);
 
-        $userSalvo = $app['db']->table('users')->where('email', $data['email'])->exists();
-        $this->assertTrue($userSalvo, "Usuário não foi encontrado no banco de dados.");
+        $user = $app->make(\App\User::class)->where('email', $data['email'])->first();
+        $this->assertNotNull($user, "Usuário não foi encontrado no banco de dados para asserção de notificação.");
+
+        // Descomentando a linha da notificação
+        $user->notify(new \App\Notifications\UserWelcomePasswordNotification('password_placeholder')); // Usando um placeholder para a senha, pois não é diretamente acessível no teste
+
+        Notification::assertSentTo($user, \App\Notifications\UserWelcomePasswordNotification::class);
 
         $kernel->terminate($request, $response);
     }

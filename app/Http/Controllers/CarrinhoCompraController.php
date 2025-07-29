@@ -66,7 +66,7 @@ class CarrinhoCompraController extends Controller
             }
             Session::put('cart', $cart);
             return redirect()->back()->withSuccess('Alterações feitas com sucesso!');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
         }
     }
@@ -78,7 +78,7 @@ class CarrinhoCompraController extends Controller
             unset($cart[$id]);
             Session::put('cart', $cart);
             return redirect()->back()->withSuccess('Item removido com sucesso!');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
         }
     }
@@ -125,7 +125,7 @@ class CarrinhoCompraController extends Controller
             Session::forget('cart');
 
             return redirect('/historico');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
         }
     }

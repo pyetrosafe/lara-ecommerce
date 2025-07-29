@@ -35,6 +35,7 @@ class HistoricoPedidosControllerTest extends TestCase
         $app = $this->createApplication();
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
+        // Garante um banco de dados limpo para cada teste
         Artisan::call('migrate:fresh');
         Artisan::call('db:seed', ['--force' => true]);
 

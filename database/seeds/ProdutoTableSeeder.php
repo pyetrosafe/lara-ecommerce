@@ -20,7 +20,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000001.jpg',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -31,7 +31,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000002.png',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -42,7 +42,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000003.jpg',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -53,7 +53,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000004.jpg',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -64,7 +64,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000005.jpg',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -75,7 +75,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000006.jpg',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -86,7 +86,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000007.jpg',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -97,7 +97,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000008.jpg',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -108,7 +108,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000009.png',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -119,7 +119,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000010.png',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
 
         DB::table('tbl_produto')->insert([
@@ -130,7 +130,7 @@ class ProdutoTableSeeder extends Seeder
             'ativo' => true,
             'imagem' => 'public/produtos/produto_image_000011.jpg',
             'quantidade' => 10,
-            'created_at' => 'now()',
+            'created_at' => now(),
         ]);
     }
 }
