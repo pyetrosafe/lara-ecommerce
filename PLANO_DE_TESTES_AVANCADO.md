@@ -6,7 +6,7 @@ Este plano descreve a estratégia para implementar uma suíte de testes completa
 
 *   [x] **Fase 0: Preparação e Configuração do Ambiente de Teste**
 *   [x] **Fase 1: Testes de Unidade - Models (Camada de Dados)**
-*   [ ] **Fase 2: Testes de Funcionalidade - Controllers e Rotas (Camada de HTTP)**
+*   [x] **Fase 2: Testes de Funcionalidade - Controllers e Rotas (Camada de HTTP)**
 *   [ ] **Fase 3: Teste de Integração (Jornada do Usuário)**
 *   [ ] **Fase 4: Execução Final e Relatório de Cobertura**
 
@@ -18,11 +18,11 @@ Este plano descreve a estratégia para implementar uma suíte de testes completa
 
 **Passos:**
 
-1.  **[ ] Configurar `phpunit.xml`:**
+1.  **[x] Configurar `phpunit.xml`:**
     *   Analisar o arquivo `phpunit.xml` existente.
     *   Garantir que as variáveis de ambiente para teste estejam descomentadas e configuradas para usar uma conexão de banco de dados separada.
 
-2.  **[ ] Criar o arquivo `.env.testing`:**
+2.  **[x] Criar o arquivo `.env.testing`:**
     *   Criar uma cópia do `.env.example` chamada `.env.testing`.
     *   Configurar este arquivo para usar um banco de dados em memória (SQLite) para máxima performance:
         ```
@@ -30,7 +30,7 @@ Este plano descreve a estratégia para implementar uma suíte de testes completa
         DB_DATABASE=:memory:
         ```
 
-3.  **[ ] Preparar a Classe de Teste Base:**
+3.  **[x] Preparar a Classe de Teste Base:**
     *   Instruir todos os testes de funcionalidade a usar o trait `Illuminate\Foundation\Testing\RefreshDatabase`. Isso garantirá que o banco de dados seja migrado e zerado antes de cada teste, proporcionando um estado limpo e consistente.
 
 ---
@@ -70,18 +70,19 @@ Este plano descreve a estratégia para implementar uma suíte de testes completa
     *   Usar o Artisan para gerar os arquivos na pasta `tests/Feature`.
     *   Comando: `php artisan make:test Http\Controllers\ProdutoControllerTest` (repetir para os controllers principais).
 
-3.  **[ ] Escrever testes para o `ProdutoController`:**
-    *   Teste de `index`: Verificar se a rota `/produtos` retorna status 200 e exibe uma lista de produtos.
-    *   Teste de `show`: Verificar se a rota `/produtos/{id}` retorna um produto específico.
-    *   Teste de `store` (criação):
-        *   Verificar se a validação falha com dados inválidos (retorna erro 422 ou redireciona com erros).
-        *   Verificar se um produto é criado no banco de dados com dados válidos.
-    *   Testar as rotas de `update` e `destroy` de forma similar.
-
-4.  [x] **Repetir o processo para outros Controllers:**
-    *   [x] `Admin\ClientesController` (Store, Update, Destroy)
+3.  [x] **Escrever testes para os Controllers existentes:**
+    *   [x] `Admin\ClientesController`
+    *   [x] `Admin\GraficoController`
+    *   [x] `Admin\PedidosController`
+    *   [x] `Admin\ProdutosController`
+    *   [x] `CarrinhoCompraController`
     *   [x] `HistoricoPedidosController`
-    *   Aplicar a mesma lógica para os controllers de autenticação, carrinho, pedidos, etc.
+    *   [x] `HomeController`
+
+4.  **[ ] Escrever testes para os Controllers restantes:**
+    *   [ ] `AdminController`
+    *   [ ] `ClientesController`
+    *   [ ] `ProdutosController`
 
 **Nota sobre Refatoração (Clean Code):** Se encontrarmos "Fat Controllers" (controllers com muita lógica), vamos refatorá-los. A lógica de negócio será movida para classes de Serviço ou Ação (Action classes), tornando o controller enxuto e focado apenas em receber a requisição e retornar a resposta.
 
