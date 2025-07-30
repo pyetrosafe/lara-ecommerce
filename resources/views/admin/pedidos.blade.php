@@ -97,7 +97,7 @@
                             @endforeach
                             @if (count($listRecords)==0)
                             <tr>
-                              <td colspan="6" align="center">Nenhum registro encontrado!</td>
+                              <td colspan="7" align="center">Nenhum registro encontrado!</td>
                             </tr>
                             @endif
                           </tbody>

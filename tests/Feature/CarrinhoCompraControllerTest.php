@@ -4,37 +4,11 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Http\Request;
 use App\Produto;
 
 class CarrinhoCompraControllerTest extends TestCase
 {
-    // O RefreshDatabase é intencionalmente removido para evitar conflitos de conexão.
-    // O banco de dados será gerenciado manualmente.
-    // use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
-    }
-
-    /**
-     * Helper method to set up application and database.
-     *
-     * @return array
-     */
-    protected function setupApplicationAndDatabase()
-    {
-        $app = $this->createApplication();
-        $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
-
-        Artisan::call('migrate:fresh');
-        Artisan::call('db:seed', ['--force' => true]);
-
-        return ['app' => $app, 'kernel' => $kernel];
-    }
+    use RefreshDatabase;
 
     /**
      * Test GET /carrinho (showCart).
@@ -43,15 +17,11 @@ class CarrinhoCompraControllerTest extends TestCase
      */
     public function testShowCart()
     {
-        extract($this->setupApplicationAndDatabase());
+        $response = $this->get('/carrinho');
 
-        $request = Request::create('/carrinho', 'GET');
-        $response = $kernel->handle($request);
-
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertStringContainsString('Meu Carrinho', $response->getContent());
-
-        $kernel->terminate($request, $response);
+        $response->assertStatus(200);
+        $response->assertViewIs('carrinho');
+        $response->assertSee('Meu Carrinho');
     }
 
     /**
@@ -61,17 +31,12 @@ class CarrinhoCompraControllerTest extends TestCase
      */
     public function testAddCart()
     {
-        extract($this->setupApplicationAndDatabase());
-
         $produto = factory(Produto::class)->create();
 
-        $request = Request::create('/carrinho/' . $produto->id, 'GET');
-        $response = $kernel->handle($request);
+        $response = $this->get('/carrinho/' . $produto->id);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/carrinho', $response->headers->get('Location'));
-
-        $kernel->terminate($request, $response);
+        $response->assertRedirect('/carrinho');
+        $this->assertArrayHasKey($produto->id, session('cart'));
     }
 
     /**
@@ -81,20 +46,15 @@ class CarrinhoCompraControllerTest extends TestCase
      */
     public function testUpdateCart()
     {
-        extract($this->setupApplicationAndDatabase());
-
         $produto = factory(Produto::class)->create();
-        // Simular a adição do produto ao carrinho para que possa ser atualizado
-        $addRequest = Request::create('/carrinho/' . $produto->id, 'GET');
-        $kernel->handle($addRequest);
+        
+        // Add product to cart first
+        $this->get('/carrinho/' . $produto->id);
 
-        $request = Request::create('/carrinho/' . $produto->id, 'PUT', ['quantidade' => 2], [], [], ['HTTP_X-CSRF-TOKEN' => 'dummy_token']);
-        $response = $kernel->handle($request);
+        $response = $this->put('/carrinho/' . $produto->id, [$produto->id => 2]);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/carrinho', $response->headers->get('Location'));
-
-        $kernel->terminate($request, $response);
+        $response->assertRedirect('/carrinho/' . $produto->id);
+        $this->assertEquals(2, session('cart')[$produto->id]['quantidade']);
     }
 
     /**
@@ -104,19 +64,14 @@ class CarrinhoCompraControllerTest extends TestCase
      */
     public function testDeleteCart()
     {
-        extract($this->setupApplicationAndDatabase());
-
         $produto = factory(Produto::class)->create();
-        // Simular a adição do produto ao carrinho para que possa ser removido
-        $addRequest = Request::create('/carrinho/' . $produto->id, 'GET');
-        $kernel->handle($addRequest);
 
-        $request = Request::create('/carrinho/' . $produto->id, 'DELETE', [], [], [], ['HTTP_X-CSRF-TOKEN' => 'dummy_token']);
-        $response = $kernel->handle($request);
+        // Add product to cart first
+        $this->get('/carrinho/' . $produto->id);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/carrinho', $response->headers->get('Location'));
+        $response = $this->delete('/carrinho/' . $produto->id);
 
-        $kernel->terminate($request, $response);
+        $response->assertRedirect('/carrinho/' . $produto->id);
+        $this->assertArrayNotHasKey($produto->id, session('cart'));
     }
 }

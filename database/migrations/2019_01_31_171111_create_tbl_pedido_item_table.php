@@ -20,6 +20,7 @@ class CreateTblPedidoItemTable extends Migration
             $table->smallInteger('quantidade');
             $table->decimal('valor');
             $table->timestamps();
+            $table->primary(['id_pedido', 'id_produto']);
             $table->foreign('id_pedido')->references('id')->on('tbl_pedido');
             $table->foreign('id_produto')->references('id')->on('tbl_produto');
         });

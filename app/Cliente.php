@@ -4,11 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Kyslik\ColumnSortable\Sortable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cliente extends Model
 {
     //
     use Sortable;
+    use SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -20,11 +22,45 @@ class Cliente extends Model
     public $sortable = ['id', 'nome', 'cpf', 'telefone', 'endereco', 'numero'];
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (Cliente $cliente) {
+            // Soft delete related Pedidos
+            $cliente->Pedidos()->delete();
+            // Soft delete the user associated with the cliente
+            $cliente->User()->delete();
+        });
+
+        self::restoring(function (Cliente $cliente) {
+            // Restore related Pedidos when parent is restored
+            $cliente->Pedidos()->withTrashed()->restore();
+            // Restore the user associated with the cliente
+            $cliente->User()->withTrashed()->restore();
+        });
+
+    }
+
+    /**
      * Get the relation record associated with the user.
      */
     public function User()
     {
         return $this->belongsTo('App\User', 'id_usuario', 'id');
+    }
+
+    /**
+     * Get the cliente's pedidos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function Pedidos() {
+        return $this->hasMany('App\Pedido', 'id_cliente', 'id');
     }
 
     /**

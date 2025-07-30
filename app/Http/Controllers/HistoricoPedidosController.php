@@ -89,10 +89,10 @@ class HistoricoPedidosController extends Controller
                         ->first();
 
         if ($pedido) {
-            $pedido->id_pedido_status = 7;
-            $pedido->save();
+            // $pedido->id_pedido_status = 7;
+            // $pedido->save();
 
-            $pedido->refresh();
+            // $pedido->refresh();
 
             $from = new \DateTime($pedido->updated_at);
             $diff = $from->diff(new \DateTime(date("Y-m-d H:i:s")));

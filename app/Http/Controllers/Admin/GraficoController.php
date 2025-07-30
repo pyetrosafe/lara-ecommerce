@@ -16,7 +16,6 @@ class GraficoController extends Controller
      */
     public function index(Request $request)
     {
-        //
         try {
             if ($request->except('_token', '_method')) {
                 $date = explode(' - ', $request->input('filtroData'));
@@ -24,11 +23,10 @@ class GraficoController extends Controller
                 $date = array(date('Y-m-d', strtotime('-7 day')), date('Y-m-d'));
             }
 
-            //dd( $date );
-            $pedidos = Pedido::selectRaw(' created_at::date, count(id), sum(valor)')/* with('Produtos', 'PedidoStatus')-> */
-                                    ->groupBy(DB::raw('created_at::date'))
-                                    ->whereDate('created_at', '>=', $date[0])
-                                    ->whereDate('created_at', '<=', $date[1]);
+            $pedidos = Pedido::selectRaw(' DATE(created_at), count(id), sum(valor)')/* with('Produtos', 'PedidoStatus')-> */
+                                ->groupBy(DB::raw('DATE(created_at)'))
+                                ->whereDate('created_at', '>=', $date[0])
+                                ->whereDate('created_at', '<=', $date[1]);
 
             $pedAberto    = (clone $pedidos)->where('id_pedido_status', 1)->get()->toArray();
             $pedPago      = (clone $pedidos)->where('id_pedido_status', 2)->get()->toArray();

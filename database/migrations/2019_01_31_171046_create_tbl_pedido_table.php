@@ -24,6 +24,7 @@ class CreateTblPedidoTable extends Migration
             $table->unsignedInteger('id_usuario_update')->nullable();
             $table->decimal('valor');
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('id_cliente')->references('id')->on('tbl_cliente');
             $table->foreign('id_pedido_status')->references('id')->on('tbl_pedido_status');
             $table->foreign('id_usuario_update')->references('id')->on('users');

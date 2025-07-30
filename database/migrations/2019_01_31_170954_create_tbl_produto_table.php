@@ -26,6 +26,7 @@ class CreateTblProdutoTable extends Migration
             $table->string('imagem', 255)->nullable();
             $table->integer('quantidade')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

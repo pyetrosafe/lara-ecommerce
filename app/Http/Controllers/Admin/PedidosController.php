@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Pedido;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PedidosController extends Controller
 {
+    use SoftDeletes;
+
     /**
      * Display a listing of the resource.
      *
@@ -16,13 +19,16 @@ class PedidosController extends Controller
      */
     public function index(Request $request)
     {
-        //
         $filterDate = false;
         $ftrPage = $request->input('ftrPage') ?? 20;
 
         if ($request->input('ftrDate')) {
             $filterDate = true;
-            $date = explode(' - ', $request->input('ftrDate'));
+            $date = array_map(function($value) {
+                    return date('Y-m-d', strtotime(str_replace('/', '-', trim($value))));
+                },
+                explode(' - ', $request->input('ftrDate'))
+            );
         } else {
             $date = array(date('Y-m-d', strtotime('-7 day')), date('Y-m-d'));
         }
@@ -56,7 +62,6 @@ class PedidosController extends Controller
      */
     public function store(Request $request)
     {
-        //
         $cliente = $request->cliente;
 
         $pedidoItens = $request->except('_token', '_method', 'cliente');
@@ -98,9 +103,7 @@ class PedidosController extends Controller
      */
     public function show($id)
     {
-        //
         $record = Pedido::with('Produtos', 'PedidoStatus', 'Cliente')->find($id);
-        //d( $record );
 
         // $record->id_pedido_status = 7;
         // $record->save();
@@ -124,7 +127,6 @@ class PedidosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
         $pedidoItens = $request->except('_token', '_method', 'cliente');
 
         try {
@@ -165,9 +167,6 @@ class PedidosController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $pedido = $id;
-
         try {
 
             $pedido = Pedido::find($id);
@@ -176,7 +175,7 @@ class PedidosController extends Controller
                 redirect()->back()->withErrors('Pedido não encontrado!');
 
             $pedido->id_usuario_update = auth()->user()->id;
-            $pedido->id_pedido_status = 6;
+            $pedido->id_pedido_status = 7;
             $pedido->save();
 
             return redirect('admin/pedidos');

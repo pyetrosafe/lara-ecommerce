@@ -23,7 +23,6 @@ class ClientesController extends Controller
      */
     public function index(Request $request)
     {
-        //
         $filterDate = false;
         $ftrPage = $request->input('ftrPage') ?? 20;
 
@@ -34,7 +33,7 @@ class ClientesController extends Controller
             $date = array(date('Y-m-d', strtotime('-7 day')), date('Y-m-d'));
         }
 
-        $listRecords = Cliente::withoutGlobalScopes();
+        $listRecords = new Cliente;
 
         if ($filterDate)
             $listRecords->whereDate('created_at', '>=', $date[0])
@@ -123,9 +122,10 @@ class ClientesController extends Controller
      */
     public function show($id)
     {
-        //
         $record = Cliente::with('User')->find($id);
-        //d( $record );
+
+        if (!$record)
+            return redirect()->back()->withErrors('Cliente não encontrado!');
 
         $params = array(
             //'action'        => 'show',
@@ -193,21 +193,18 @@ class ClientesController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $cliente = $id;
-
         try {
 
             $cliente = Cliente::find($id);
 
             if (!$cliente)
-                redirect()->back()->withErrors('Cliente não encontrado!');
+                return redirect()->back()->withErrors('Cliente não encontrado!');
 
             $cliente->delete();
 
-            return redirect('admin/clientes');
+            return redirect('admin/clientes')->withSuccess('Cliente excluído com sucesso!');
         } catch (\Exception $e) {
-            return $e->getMessage();
+            return redirect()->back()->withErrors($e->getMessage());
         }
     }
 
@@ -250,16 +247,3 @@ class ClientesController extends Controller
         return $clientes;
     }
 }
-
-//// New Request Methods
-//$newRequest = new Request;
-
-//// For POST method
-//$newRequest->setMethod('POST');
-//$newRequest->request->add(['user' => $user]);
-
-//// By the way using $newRequest->query->add() you can add data to a GET request.
-//$newRequest->replace(['foo' => 'bar']);
-
-//// Other method
-//$newRequest->merge(['foo' => 'bar']);

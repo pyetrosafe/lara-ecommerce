@@ -33,6 +33,12 @@ RUN docker-php-ext-install pdo pdo_pgsql
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 
+# Instalar e habilitar Xdebug via PECL
+# As dependências de compilação (php-dev, autoconf) já estarão instaladas.
+RUN pecl install xdebug-3.1.6 && docker-php-ext-enable xdebug
+
+COPY ./docker/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
 # Install composer (php package manager)
 # RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

@@ -18,7 +18,27 @@ class PedidoStatusTableSeeder extends Seeder
         ]);
 
         DB::table('tbl_pedido_status')->insert([
-            'descricao' => 'Pago',
+            'descricao' => 'Confirmado',
+            'created_at' => now(),
+        ]);
+
+        DB::table('tbl_pedido_status')->insert([
+            'descricao' => 'Aguardando pagamento',
+            'created_at' => now(),
+        ]);
+
+        DB::table('tbl_pedido_status')->insert([
+            'descricao' => 'Pagamento confirmado',
+            'created_at' => now(),
+        ]);
+
+        DB::table('tbl_pedido_status')->insert([
+            'descricao' => 'Pedido enviado',
+            'created_at' => now(),
+        ]);
+
+        DB::table('tbl_pedido_status')->insert([
+            'descricao' => 'Pedido entregue',
             'created_at' => now(),
         ]);
 

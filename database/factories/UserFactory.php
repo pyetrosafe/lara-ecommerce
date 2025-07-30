@@ -23,3 +23,7 @@ $factory->define(App\User::class, function (Faker $faker) {
         'admin' => false,
     ];
 });
+
+$factory->state(App\User::class, 'admin', [
+    'admin' => true,
+]);

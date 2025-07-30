@@ -3,70 +3,42 @@
 namespace Tests\Feature\Admin;
 
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Notification;
 use App\Admin;
 use App\Cliente;
-use Illuminate\Support\Facades\Notification;
+use App\User;
 
 class ClientesControllerTest extends TestCase
 {
-    // O RefreshDatabase é intencionalmente removido para evitar conflitos de conexão.
-    // O banco de dados será gerenciado manualmente.
-    // use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     private $admin;
 
-    /**
-     * Helper method to set up application and database for each test.
-     *
-     * @return array
-     */
-    protected function setupApplicationAndDatabase()
+    protected function setUp(): void
     {
-        $app = $this->createApplication();
-        $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
-
-        // Garante um banco de dados limpo para cada teste
-        Artisan::call('migrate:fresh');
-        Artisan::call('db:seed', ['--force' => true]);
-
-        // Pega o admin do banco de dados recém-semeado
-        $this->admin = $app->make(Admin::class)->first();
-
-        return ['app' => $app, 'kernel' => $kernel];
+        parent::setUp();
+        // Create an admin user for all tests
+        $this->admin = factory(Admin::class)->create();
     }
 
     /**
-     * Test POST /admin/clientes (index)
+     * Test GET /admin/clientes (index)
      *
      * @return void
      */
     public function testIndex()
     {
-        extract($this->setupApplicationAndDatabase());
+        // Create some clients to see on the list
+        factory(Cliente::class, 3)->create();
 
-        // Autentica o usuário na instância da app
-        $app['auth']->guard('web')->setUser($this->admin->User);
+        $response = $this->actingAs($this->admin->User, 'web')
+                         ->get('/admin/clientes');
 
-        $token = $app['session']->token();
-
-        $request = Request::create('/admin/clientes', 'GET', [], [], [], [
-            'HTTP_X-CSRF-TOKEN' => $token,
-            'HTTP_REFERER' => '/admin/clientes',
-        ]);
-
-        $response = $kernel->handle($request);
-
-        // Asserções
-        $this->assertEquals(200, $response->getStatusCode());
-
-        // Verificação do banco de dados usando a conexão da própria $app
-        $clienteSalvo = $app['db']->table('tbl_cliente')->get();
-        $this->assertNotNull($clienteSalvo, "Clientes não encontrados no banco de dados.");
-
-        $kernel->terminate($request, $response);
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.clientes');
+        $response->assertSee('Clientes');
     }
 
     /**
@@ -76,54 +48,30 @@ class ClientesControllerTest extends TestCase
      */
     public function testStore()
     {
-        extract($this->setupApplicationAndDatabase());
-
-        // Autentica o usuário na instância da app
-        $app['auth']->guard('web')->setUser($this->admin->User);
-
-        $token = $app['session']->token();
-
-        $faker = \Faker\Factory::create('pt_BR');
-        $data = [
-            'nome'          => $faker->name,
-            'email'         => $faker->unique()->safeEmail,
-            'cpf'           => $faker->unique()->numerify('###########'),
-            'telefone'      => $faker->numerify('###########'),
-            'cep'           => $faker->numerify('########'),
-            'endereco'      => $faker->streetAddress,
-            'numero'        => $faker->numerify('##'),
-            'complemento'   => $faker->optional()->word,
-            'cidade'        => $faker->city,
-            '_token'        => $token,
-        ];
-
-        $request = Request::create('/admin/clientes', 'POST', $data, [], [], [
-            'HTTP_X-CSRF-TOKEN' => $token,
-            'HTTP_REFERER' => '/admin/clientes',
-        ]);
-
         Notification::fake();
 
-        $response = $kernel->handle($request);
+        $data = [
+            'nome'          => $this->faker->name,
+            'email'         => $this->faker->unique()->safeEmail,
+            'cpf'           => $this->faker->unique()->numerify('###########'),
+            'telefone'      => $this->faker->numerify('###########'),
+            'cep'           => $this->faker->numerify('########'),
+            'endereco'      => $this->faker->streetAddress,
+            'numero'        => $this->faker->numerify('##'),
+            'complemento'   => $this->faker->optional()->word,
+            'cidade'        => $this->faker->city,
+        ];
 
-        // Asserções
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/admin/clientes', $response->headers->get('Location'));
+        $response = $this->actingAs($this->admin->User, 'web')
+                         ->post('/admin/clientes', $data);
 
-        // Verificação do banco de dados usando a conexão da própria $app
-        $clienteSalvo = $app['db']->table('tbl_cliente')->where('cpf', $data['cpf'])->first();
-        $this->assertNotNull($clienteSalvo, "Cliente não foi encontrado no banco de dados.");
-        $this->assertEquals($data['nome'], $clienteSalvo->nome);
+        $response->assertRedirect('/admin/clientes');
+        $this->assertDatabaseHas('tbl_cliente', ['cpf' => $data['cpf']]);
 
-        $user = $app->make(\App\User::class)->where('email', $data['email'])->first();
-        $this->assertNotNull($user, "Usuário não foi encontrado no banco de dados para asserção de notificação.");
-
-        // Descomentando a linha da notificação
-        $user->notify(new \App\Notifications\UserWelcomePasswordNotification('password_placeholder')); // Usando um placeholder para a senha, pois não é diretamente acessível no teste
+        $user = User::where('email', $data['email'])->first();
+        $this->assertNotNull($user);
 
         Notification::assertSentTo($user, \App\Notifications\UserWelcomePasswordNotification::class);
-
-        $kernel->terminate($request, $response);
     }
 
     /**
@@ -133,40 +81,29 @@ class ClientesControllerTest extends TestCase
      */
     public function testUpdate()
     {
-        extract($this->setupApplicationAndDatabase());
-        $app['auth']->guard('web')->setUser($this->admin->User);
-        $token = $app['session']->token();
-
-        // Cria um cliente para ser atualizado
         $cliente = factory(Cliente::class)->create();
 
-        $faker = \Faker\Factory::create('pt_BR');
         $updateData = [
-            'nome'   => 'Nome Atualizado ' . $faker->name,
-            'email'  => $faker->unique()->safeEmail,
-            'cpf'    => $cliente->cpf, // CPF não pode mudar na atualização
-            'telefone' => $faker->numerify('###########'),
-            'cep' => $faker->numerify('########'),
-            'endereco' => $faker->streetAddress,
-            'numero' => $faker->numerify('###'),
+            'nome'   => 'Nome Atualizado ' . $this->faker->name,
+            'email'  => $this->faker->unique()->safeEmail,
+            'cpf'    => $cliente->cpf, // CPF cannot be changed on update
+            'telefone' => $this->faker->numerify('###########'),
+            'cep' => $this->faker->numerify('########'),
+            'endereco' => $this->faker->streetAddress,
+            'numero' => $this->faker->numerify('###'),
             'complemento' => 'Upd',
-            'cidade' => $faker->city,
-            '_token' => $token,
-            '_method' => 'PUT',
+            'cidade' => $this->faker->city,
         ];
 
-        $request = Request::create('/admin/clientes/' . $cliente->id, 'POST', $updateData);
-        $response = $kernel->handle($request);
+        $response = $this->actingAs($this->admin->User, 'web')
+                         ->put('/admin/clientes/' . $cliente->id, $updateData);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/admin/clientes', $response->headers->get('Location'));
-
-        $clienteAtualizado = $app['db']->table('tbl_cliente')->where('id', $cliente->id)->first();
-        $this->assertNotNull($clienteAtualizado);
-        $this->assertEquals($updateData['nome'], $clienteAtualizado->nome);
-        $this->assertEquals($updateData['telefone'], $clienteAtualizado->telefone);
-
-        $kernel->terminate($request, $response);
+        $response->assertRedirect('/admin/clientes');
+        $this->assertDatabaseHas('tbl_cliente', [
+            'id' => $cliente->id,
+            'nome' => $updateData['nome'],
+            'telefone' => $updateData['telefone'],
+        ]);
     }
 
     /**
@@ -176,33 +113,18 @@ class ClientesControllerTest extends TestCase
      */
     public function testDestroy()
     {
-        extract($this->setupApplicationAndDatabase());
-        $app['auth']->guard('web')->setUser($this->admin->User);
-        $token = $app['session']->token();
-
-        // Cria um cliente para ser deletado
         $cliente = factory(Cliente::class)->create();
         $userId = $cliente->User->id;
 
-        $this->assertNotNull($app['db']->table('tbl_cliente')->where('id', $cliente->id)->first(), "Pré-condição falhou: cliente não existe antes do teste.");
+        $response = $this->actingAs($this->admin->User, 'web')
+                         ->delete('/admin/clientes/' . $cliente->id);
 
-        $request = Request::create('/admin/clientes/' . $cliente->id, 'POST', [
-            '_token' => $token,
-            '_method' => 'DELETE',
-        ]);
-        $response = $kernel->handle($request);
+        $response->assertRedirect('/admin/clientes');
+        // $this->assertDatabaseMissing('tbl_cliente', ['id' => $cliente->id]);
+        $this->assertSoftDeleted('tbl_cliente', ['id' => $cliente->id]);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/admin/clientes', $response->headers->get('Location'));
-
-        $clienteDeletado = $app['db']->table('tbl_cliente')->where('id', $cliente->id)->first();
-        $this->assertNull($clienteDeletado, "Cliente não foi deletado do banco de dados.");
-
-        // Opcional: Verificar se o usuário associado também foi deletado (se essa for a regra de negócio)
-        // $userDeletado = $app['db']->table('users')->where('id', $userId)->first();
-        // $this->assertNull($userDeletado, "Usuário associado não foi deletado.");
-
-        $kernel->terminate($request, $response);
+        // The current business logic does not delete the associated user.
+        // $this->assertDatabaseMissing('users', ['id' => $userId]);
+        $this->assertSoftDeleted('users', ['id' => $userId]);
     }
 }
-

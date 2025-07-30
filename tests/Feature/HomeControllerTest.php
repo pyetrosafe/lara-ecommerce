@@ -4,8 +4,6 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Http\Request;
 
 class HomeControllerTest extends TestCase
 {
@@ -18,16 +16,10 @@ class HomeControllerTest extends TestCase
      */
     public function testMigrateRouteAccess()
     {
-        $app = $this->createApplication();
-        $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+        $response = $this->get('/migrate');
 
-        $request = Request::create('/migrate', 'GET');
-        $response = $kernel->handle($request);
-
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertStringContainsString('Migrate concluído!', $response->getContent());
-
-        $kernel->terminate($request, $response);
+        $response->assertStatus(200);
+        $response->assertSee('Migrate concluído!');
     }
 
     /**
@@ -37,19 +29,12 @@ class HomeControllerTest extends TestCase
      */
     public function testIndexPageAccess()
     {
-        $app = $this->createApplication();
-        $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+        $this->seed();
 
-        Artisan::call('migrate:fresh');
-        Artisan::call('db:seed', ['--force' => true]);
+        $response = $this->get('/');
 
-        $request = Request::create('/', 'GET');
-        $response = $kernel->handle($request);
-
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertStringContainsString('As Melhores Ofertas', $response->getContent());
-
-        $kernel->terminate($request, $response);
+        $response->assertStatus(200);
+        $response->assertSee('As Melhores Ofertas');
     }
 
     /**
@@ -59,18 +44,11 @@ class HomeControllerTest extends TestCase
      */
     public function testHomePageAccess()
     {
-        $app = $this->createApplication();
-        $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+        $this->seed();
 
-        Artisan::call('migrate:fresh');
-        Artisan::call('db:seed', ['--force' => true]);
+        $response = $this->get('/home');
 
-        $request = Request::create('/home', 'GET');
-        $response = $kernel->handle($request);
-
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertStringContainsString('As Melhores Ofertas', $response->getContent());
-
-        $kernel->terminate($request, $response);
+        $response->assertStatus(200);
+        $response->assertSee('As Melhores Ofertas');
     }
 }

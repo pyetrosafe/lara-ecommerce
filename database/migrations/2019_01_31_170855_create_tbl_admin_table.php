@@ -18,6 +18,7 @@ class CreateTblAdminTable extends Migration
             $table->unsignedInteger('id_usuario');
             $table->string('nome', 100);
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('id_usuario')->references('id')->on('users');
         });
     }

@@ -136,7 +136,7 @@
                     <div class="form-row justify-content-center">
                         <button class="btn btn-success mx-2 mb-1" id="btn_save" {!! (getRequestAction()=='show' ? 'data-btn-type="put"': '') !!}><i class="fa fa-edit"></i> Salvar</button>
                         @if (getRequestAction()=='show')
-                        {{-- <!-- <button class="btn btn-danger mx-2 mb-1" id="btn_delete" data-btn-type="delete"><i class="fa fa-trash-alt"></i> Excluir</button> --> --}}
+                        <button class="btn btn-danger mx-2 mb-1" id="btn_delete" data-btn-type="delete"><i class="fa fa-trash-alt"></i> Excluir</button>
                         @endif
                         <a class="btn btn-light border mx-2 mb-1" href="{{ url('/').'/'.Request::segment(1).'/'.Request::segment(2) }}"><i class="fa fa-undo"></i> Cancelar</a>
                     </div>

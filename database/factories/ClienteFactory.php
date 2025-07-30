@@ -9,7 +9,7 @@ $factory->define(App\Cliente::class, function (Faker $faker) {
         'nome' => $faker->name,
         'cpf' => $faker->numerify('###########'), // 11 digits for CPF
         'telefone' => $faker->numerify('###########'), // 11 digits for phone
-        'cep' => $faker->postcode, // Add cep
+        'cep' => $faker->numerify('#######'), // Add cep
         'endereco' => $faker->address,
         'numero' => $faker->buildingNumber,
         'cidade' => $faker->city, // Add cidade

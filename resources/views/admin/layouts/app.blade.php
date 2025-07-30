@@ -33,7 +33,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ asset('components/daterangepicker/daterangepicker.css') }}" />
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('components/jQuery-autoComplete-master/jQuery.auto-complete.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('components/jQuery-autoComplete-master/jquery.auto-complete.css') }}" />
 
     <style>
       .bd-placeholder-img {
@@ -159,7 +159,7 @@
 
     <script src="{{ asset('components/daterangepicker/daterangepicker.min.js') }}"></script>
 
-    <script src="{{ asset('components/jQuery-autoComplete-master/jQuery.auto-complete.min.js') }}"></script>
+    <script src="{{ asset('components/jQuery-autoComplete-master/jquery.auto-complete.min.js') }}"></script>
 
     <script>
         $(function() {

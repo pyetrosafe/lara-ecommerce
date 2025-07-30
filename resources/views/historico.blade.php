@@ -83,7 +83,7 @@
                                         </tr>
                                     @endforeach
                                     </tbody>
-                                    @if (in_array($pedido->PedidoStatus->id, [1, 2, 7]))
+                                    {{-- @if (in_array($pedido->PedidoStatus->id, [1, 2, 7]))
                                     <tfoot>
                                         <tr>
                                             <td colspan="3" class="hidden-xs">
@@ -106,7 +106,7 @@
                                              <td><a href="{{ url('/').'/historico/'.$pedido->id }}" class="btn btn-info"><i class="fa fa-edit"></i> Alterar Pedido </a></td>
                                         </tr>
                                     </tfoot>
-                                    @endif
+                                    @endif --}}
                                 </table>
                             </div>
                         </div>
